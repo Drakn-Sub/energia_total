@@ -1,0 +1,42 @@
+# Core Django
+Django>=4.2,<5.0
+
+# REST API
+djangorestframework>=3.14.0
+
+# Database
+psycopg2-binary>=2.9.5  # PostgreSQL (opcional)
+mysqlclient>=2.1.1  # MySQL (para producción según diseño)
+
+# Security - Password Hashing con Bcrypt
+bcrypt>=4.0.1
+django[bcrypt]
+
+# Authentication
+django-allauth>=0.54.0
+
+# Environment Variables
+django-environ>=0.10.0
+
+# Real-time (opcional para futuras mejoras)
+channels>=4.0.0
+channels-redis>=4.1.0
+
+# Forms
+django-crispy-forms>=2.0
+
+# Utilidades
+python-decouple>=3.8  # Manejo de configuración
+Pillow>=10.0.0  # Para imágenes (si se necesita)
+
+# Testing
+pytest>=7.4.0
+pytest-django>=4.5.2
+coverage>=7.2.0
+
+# Code Quality
+flake8>=6.0.0
+black>=23.3.0
+
+# Production
+gunicorn>=21.2.0  # WSGI Server

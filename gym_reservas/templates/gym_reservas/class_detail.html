@@ -1,0 +1,99 @@
+{% extends 'gym_reservas/base.html' %}
+{% load static %}
+
+{% block title %}{{ clase.nombre }} - Energía Total{% endblock %}
+{% block meta_description %}Detalles y reserva de la clase {{ clase.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'gym_reservas:lista_clases' %}" class="breadcrumb">← Volver a clases</a>
+    
+    <article class="class-detail">
+        <header>
+            <div class="header-top">
+                <h1>{{ clase.nombre }}</h1>
+                <span class="badge-type">{{ clase.get_tipo_display }}</span>
+            </div>
+            {% if clase.esta_llena %}
+                <div class="alert alert-warning" role="alert">
+                    ⚠️ Esta clase está completamente llena
+                </div>
+            {% endif %}
+        </header>
+
+        <section class="class-info" aria-labelledby="info-title">
+            <h2 id="info-title">Información de la Clase</h2>
+            
+            <dl class="info-list">
+                <div>
+                    <dt>Descripción:</dt>
+                    <dd>{{ clase.descripcion }}</dd>
+                </div>
+                <div>
+                    <dt>Instructor:</dt>
+                    <dd>{{ clase.instructor }}</dd>
+                </div>
+                <div>
+                    <dt>Fecha:</dt>
+                    <dd>{{ clase.fecha|date:"l, d \d\e F \d\e Y" }}</dd>
+                </div>
+                <div>
+                    <dt>Hora:</dt>
+                    <dd>{{ clase.hora_inicio }}</dd>
+                </div>
+                <div>
+                    <dt>Duración:</dt>
+                    <dd>{{ clase.duracion }} minutos</dd>
+                </div>
+                <div>
+                    <dt>Capacidad:</dt>
+                    <dd>{{ clase.capacidad }} personas</dd>
+                </div>
+                <div>
+                    <dt>Precio:</dt>
+                    <dd><strong>${{ clase.precio }}</strong></dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="reservation-section" aria-labelledby="reservation-title">
+            <h2 id="reservation-title">Reservar Clase</h2>
+            
+            {% if user.is_authenticated %}
+                {% if reservado %}
+                    <div class="alert alert-success" role="alert">
+                        ✓ Ya tienes una reserva para esta clase
+                    </div>
+                    <form method="post" class="form-actions">
+                        {% csrf_token %}
+                        <button type="submit" name="cancelar" class="btn btn-danger"
+                                onclick="return confirm('¿Estás seguro de que deseas cancelar esta reserva?')">
+                            Cancelar Reserva
+                        </button>
+                    </form>
+                {% elif clase.esta_llena %}
+                    <div class="alert alert-error" role="alert">
+                        Lo sentimos, esta clase está completa. Intenta con otra.
+                    </div>
+                {% else %}
+                    <form method="post" class="form-actions">
+                        {% csrf_token %}
+                        <button type="submit" name="reservar" class="btn btn-primary" 
+                                aria-label="Reservar esta clase">
+                            Reservar Clase
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <div class="login-prompt">
+                    <p>🔐 Necesitas iniciar sesión para reservar clases</p>
+                    <a href="{% url 'gym_reservas:login' %}" class="btn btn-primary">
+                        Iniciar Sesión
+                    </a>
+                    <p class="text-muted">¿No tienes cuenta? <a href="{% url 'gym_reservas:register' %}">Regístrate aquí</a></p>
+                </div>
+            {% endif %}
+        </section>
+    </article>
+</div>
+{% endblock %}
