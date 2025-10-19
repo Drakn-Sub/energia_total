@@ -1,0 +1,624 @@
+{% extends 'gym_reservas/base.html' %}
+{% load static %}
+
+{% block title %}Clases Disponibles - Energía Total{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #0066ff;
+        --secondary: #001a4d;
+        --accent: #00d4ff;
+        --danger: #ff3333;
+        --warning: #ffaa00;
+        --success: #00ff88;
+        --dark: #0a0e27;
+        --light: #f0f4ff;
+    }
+
+    * {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6, .section-title, .badge {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    body {
+        background: var(--dark);
+        color: #e0e0e0;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+        background: linear-gradient(135deg, var(--secondary), #001a4d);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        border-bottom: 3px solid var(--accent);
+        box-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .page-header h1 {
+        font-size: 3.5em;
+        color: var(--accent);
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        font-size: 1.3em;
+        color: #b0b0ff;
+    }
+
+    /* FILTROS */
+    .filters-section {
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.05), rgba(0, 51, 204, 0.05));
+        padding: 40px 0;
+        margin: 40px 0;
+        border-top: 2px solid var(--accent);
+        border-bottom: 2px solid var(--accent);
+    }
+
+    .filters-card {
+        background: rgba(0, 102, 255, 0.1);
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0, 102, 255, 0.2);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .filters-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.95em;
+        margin-bottom: 10px;
+    }
+
+    .form-control, .form-select {
+        background: rgba(0, 102, 255, 0.1) !important;
+        border: 2px solid var(--secondary) !important;
+        color: #e0e0e0 !important;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .form-control::placeholder {
+        color: #888 !important;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3) !important;
+        background: rgba(0, 102, 255, 0.15) !important;
+    }
+
+    .form-select option {
+        background: var(--dark);
+        color: #e0e0e0;
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border: none;
+        color: var(--dark);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 12px 40px;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-filter::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-filter:hover::before {
+        left: 100%;
+    }
+
+    .btn-filter:hover {
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        transform: translateY(-3px);
+    }
+
+    /* ALERTAS */
+    .alert {
+        border: 2px solid;
+        border-radius: 8px;
+        font-weight: 600;
+        animation: slideInDown 0.5s ease-out;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border-color: var(--success);
+        color: var(--success);
+    }
+
+    .alert-danger {
+        background: rgba(255, 51, 51, 0.1);
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    /* CLASES GRID */
+    .classes-section {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 3em;
+        text-align: center;
+        color: var(--accent);
+        margin-bottom: 50px;
+        position: relative;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 150px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        margin: 20px auto 0;
+        animation: expandWidth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes expandWidth {
+        from { width: 0; }
+        to { width: 150px; }
+    }
+
+    .class-card {
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.1), rgba(0, 51, 204, 0.1));
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        padding: 0;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        height: 100%;
+        animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .class-card:nth-child(1) { animation-delay: 0.1s; }
+    .class-card:nth-child(2) { animation-delay: 0.2s; }
+    .class-card:nth-child(3) { animation-delay: 0.3s; }
+    .class-card:nth-child(4) { animation-delay: 0.4s; }
+    .class-card:nth-child(5) { animation-delay: 0.5s; }
+    .class-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .class-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+        transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 1;
+    }
+
+    .class-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+        transform: translateY(-15px);
+    }
+
+    .class-card:hover::before {
+        left: 100%;
+    }
+
+    .class-header {
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 51, 204, 0.2));
+        border-bottom: 2px solid var(--accent);
+        padding: 20px;
+    }
+
+    .class-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--dark);
+        padding: 6px 15px;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.75em;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .class-card:hover .class-badge {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    }
+
+    .class-title {
+        font-size: 1.5em;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+
+    .class-body {
+        padding: 25px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .class-info {
+        display: flex;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: #b0b0ff;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .class-card:hover .class-info {
+        color: var(--accent);
+    }
+
+    .class-info strong {
+        color: var(--accent);
+        min-width: 100px;
+    }
+
+    .availability-bar {
+        background: rgba(0, 102, 255, 0.1);
+        border: 1px solid var(--secondary);
+        border-radius: 6px;
+        padding: 15px;
+        margin: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cupos-count {
+        font-size: 1.2em;
+        font-weight: 900;
+        color: var(--accent);
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8em;
+        letter-spacing: 1px;
+    }
+
+    .status-available {
+        background: rgba(0, 255, 136, 0.2);
+        color: var(--success);
+        border: 1px solid var(--success);
+    }
+
+    .status-full {
+        background: rgba(255, 51, 51, 0.2);
+        color: var(--danger);
+        border: 1px solid var(--danger);
+    }
+
+    .reserve-btn {
+        width: 100%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--dark);
+        border: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px 20px;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .reserve-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .reserve-btn:hover::before {
+        left: 100%;
+    }
+
+    .reserve-btn:hover {
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.7);
+        transform: translateY(-3px);
+    }
+
+    .reserve-btn:disabled {
+        background: linear-gradient(135deg, #666, #888);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* NO CLASSES */
+    .no-classes {
+        text-align: center;
+        padding: 80px 40px;
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.1), rgba(0, 51, 204, 0.1));
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .no-classes p {
+        font-size: 1.3em;
+        color: #b0b0ff;
+        margin-bottom: 30px;
+    }
+
+    .btn-outline-accent {
+        color: var(--accent);
+        border: 2px solid var(--accent);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-outline-accent:hover {
+        background: var(--accent);
+        color: var(--dark);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+
+    .classes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .class-card {
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.1), rgba(0, 51, 204, 0.1));
+        border: 2px solid var(--secondary);
+        border-radius: 10px;
+        padding: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        height: 100%;
+        animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .class-card h3 {
+        font-size: 1.2em;
+        color: var(--accent);
+        margin: 10px 0;
+    }
+
+    .class-details {
+        font-size: 0.9em;
+        color: #b0b0ff;
+        margin-bottom: 15px;
+    }
+
+    .class-details i {
+        color: var(--accent);
+        margin-right: 5px;
+    }
+
+    .btn-reservar {
+        width: 100%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--dark);
+        border: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 10px 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-reservar.lista-espera {
+        background: linear-gradient(135deg, #666, #888);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-reservar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-reservar:hover::before {
+        left: 100%;
+    }
+
+    .btn-reservar:hover {
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.7);
+        transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 2em;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+        }
+
+        .class-card {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+<div class="container-fluid px-0">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Clases Disponibles</h1>
+            <p>Reserva tu clase favorita y conecta con tu energía</p>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filters-section">
+        <div class="container">
+            <form method="get" class="filters-card">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="tipo" class="form-label">Tipo de Clase</label>
+                        <select name="tipo" id="tipo" class="form-select">
+                            <option value="">Todas las clases</option>
+                            <option value="yoga" {% if request.GET.tipo == 'yoga' %}selected{% endif %}>Yoga</option>
+                            <option value="pilates" {% if request.GET.tipo == 'pilates' %}selected{% endif %}>Pilates</option>
+                            <option value="cardio" {% if request.GET.tipo == 'cardio' %}selected{% endif %}>Cardio</option>
+                            <option value="funcional" {% if request.GET.tipo == 'funcional' %}selected{% endif %}>Funcional</option>
+                            <option value="preparacion" {% if request.GET.tipo == 'preparacion' %}selected{% endif %}>Preparación Física</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fecha" class="form-label">Fecha</label>
+                        <input type="date" name="fecha" id="fecha" class="form-control" value="{{ request.GET.fecha }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="instructor" class="form-label">Instructor</label>
+                        <select name="instructor" id="instructor" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="maria">María González</option>
+                            <option value="carlos">Carlos López</option>
+                            <option value="andrea">Andrea Ruiz</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-filter w-100">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+        <div class="container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- CLASES -->
+    <div class="classes-section container">
+        <h2 class="section-title">Nuestras Clases</h2>
+
+        {% if clases %}
+            <div class="classes-grid">
+                {% for clase in clases %}
+                <div class="class-card">
+                    <span class="class-badge">{{ clase.get_tipo_display }}</span>
+                    <h3>{{ clase.nombre }}</h3>
+                    <div class="class-details">
+                        <p><i class="bi bi-person-circle"></i> <span class="instructor">{{ clase.instructor }}</span></p>
+                        <p><i class="bi bi-clock"></i> <span class="horario">{{ clase.horario }}</span></p>
+                        <p><i class="bi bi-people"></i> Cupos: {{ clase.cupos_disponibles }}/{{ clase.cupos_maximos }}</p>
+                    </div>
+                    {% if clase.esta_llena %}
+                        <button class="btn-reservar lista-espera">Lista de Espera</button>
+                    {% else %}
+                        <button class="btn-reservar">Reservar</button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-classes">
+                <p>😢 No hay clases disponibles con los filtros seleccionados.</p>
+                <a href="{% url 'gym_reservas:lista_clases' %}" class="btn btn-lg btn-outline-accent">Ver todas las clases</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}
