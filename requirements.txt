@@ -1,42 +1,122 @@
-# Core Django
-Django>=4.2,<5.0
+# Core ASGI (Asynchronous Server Gateway Interface) - necesario para Django async
+asgiref==3.10.0
 
-# REST API
-djangorestframework>=3.14.0
+# Librería para hashear contraseñas de forma segura
+bcrypt==5.0.0
 
-# Database
-psycopg2-binary>=2.9.5  # PostgreSQL (opcional)
-mysqlclient>=2.1.1  # MySQL (para producción según diseño)
+# Formateador de código Python (mantiene el código limpio y consistente)
+black==25.9.0
 
-# Security - Password Hashing con Bcrypt
-bcrypt>=4.0.1
-django[bcrypt]
+# Certificados SSL para conexiones HTTPS seguras
+certifi==2025.10.5
 
-# Authentication
-django-allauth>=0.54.0
+# Manejo de WebSockets y conexiones en tiempo real en Django
+channels==4.3.1
 
-# Environment Variables
-django-environ>=0.10.0
+# Backend de Redis para Django Channels (mensajería en tiempo real)
+channels_redis==4.3.0
 
-# Real-time (opcional para futuras mejoras)
-channels>=4.0.0
-channels-redis>=4.1.0
+# Detección automática de codificación de caracteres
+charset-normalizer==3.4.4
 
-# Forms
-django-crispy-forms>=2.0
+# Utilidad para crear interfaces de línea de comandos
+click==8.3.0
 
-# Utilidades
-python-decouple>=3.8  # Manejo de configuración
-Pillow>=10.0.0  # Para imágenes (si se necesita)
+# Colores en la terminal (mejora la legibilidad de outputs)
+colorama==0.4.6
 
-# Testing
-pytest>=7.4.0
-pytest-django>=4.5.2
-coverage>=7.2.0
+# Herramienta para medir cobertura de tests
+coverage==7.11.0
 
-# Code Quality
-flake8>=6.0.0
-black>=23.3.0
+# Framework web Django (versión 4.2 LTS)
+Django==4.2.25
 
-# Production
-gunicorn>=21.2.0  # WSGI Server
+# Autenticación completa: login, registro, OAuth (Google, Facebook, etc.)
+django-allauth==65.12.1
+
+# Renderizado elegante de formularios Django con Bootstrap/Tailwind
+django-crispy-forms==2.4
+
+# Manejo de variables de entorno (.env) en Django
+django-environ==0.12.0
+
+# Django REST Framework - para crear APIs RESTful
+djangorestframework==3.16.1
+
+# Linter para verificar estilo y errores en código Python
+flake8==7.3.0
+
+# Servidor WSGI para producción (despliega Django en servidores)
+gunicorn==23.0.0
+
+# Manejo de nombres de dominio internacionalizados
+idna==3.11
+
+# Parser de archivos de configuración INI
+iniconfig==2.3.0
+
+# Analizador de complejidad de código (parte de flake8)
+mccabe==0.7.0
+
+# Serialización eficiente de datos (usado por Redis/Channels)
+msgpack==1.1.2
+
+# Extensiones de tipos para mypy (análisis estático)
+mypy_extensions==1.1.0
+
+# Conector Python para bases de datos MySQL/MariaDB
+mysqlclient==2.2.7
+
+# Utilidades para manejo de versiones de paquetes
+packaging==25.0
+
+# Comparación de patrones de archivos (usado por Black)
+pathspec==0.12.1
+
+# Librería para procesamiento de imágenes (crucial para ImageField)
+pillow==12.0.0
+
+# Detección de directorios específicos de plataforma
+platformdirs==4.5.0
+
+# Sistema de plugins para pytest
+pluggy==1.6.0
+
+# Adaptador PostgreSQL para Python (versión binaria, más fácil de instalar)
+psycopg2-binary==2.9.11
+
+# Verificador de estilo PEP 8 (parte de flake8)
+pycodestyle==2.14.0
+
+# Detector de errores comunes en Python (parte de flake8)
+pyflakes==3.4.0
+
+# Resaltado de sintaxis para código en terminal
+Pygments==2.19.2
+
+# Framework de testing para Python
+pytest==8.4.2
+
+# Plugin de pytest específico para Django
+pytest-django==4.11.1
+
+# Manejo seguro de configuraciones sensibles con archivos .env
+python-decouple==3.8
+
+# Tokenizador de código Python
+pytokens==0.2.0
+
+# Cliente Python para Redis (base de datos en memoria)
+redis==6.4.0
+
+# Librería para hacer peticiones HTTP de forma sencilla
+requests==2.32.5
+
+# Parser SQL sin ejecución (usado internamente por Django)
+sqlparse==0.5.3
+
+# Base de datos de zonas horarias actualizada
+tzdata==2025.2
+
+# Cliente HTTP robusto (usado por requests)
+urllib3==2.5.0
